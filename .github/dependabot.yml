@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Update dependencies defined in pyproject.toml and uv.lock
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly" # Change to "daily" or "monthly" if preferred
+    labels:
+      - "dependencies"
+      - "automated-update"
+    reviewers:
+      - "asmoores"
