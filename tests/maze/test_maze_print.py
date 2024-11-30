@@ -11,7 +11,7 @@ class TestMazePrint:
 
     def test_print(self, monkeypatch, maze):
         test_output = io.StringIO()
-        monkeypatch.setattr('sys.stdout', test_output)
+        monkeypatch.setattr("sys.stdout", test_output)
         maze.print()
 
         expected_output = """

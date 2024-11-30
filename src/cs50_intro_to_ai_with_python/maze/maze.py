@@ -49,7 +49,6 @@ class QueueFrontier(Frontier):
 
 class Maze:
     def __init__(self, filename):
-
         # Read file and set height and width of maze
         self.explored = None
         self.num_explored = None
@@ -113,7 +112,7 @@ class Maze:
             ("up", (row - 1, col)),
             ("down", (row + 1, col)),
             ("left", (row, col - 1)),
-            ("right", (row, col + 1))
+            ("right", (row, col + 1)),
         ]
 
         result = []
@@ -138,7 +137,6 @@ class Maze:
 
         # Keep looping until solution found
         while True:
-
             # If nothing left in frontier, then no path
             if frontier.empty():
                 raise Exception("no solution")
@@ -171,21 +169,19 @@ class Maze:
 
     def output_image(self, filename, show_solution=True, show_explored=False):
         from PIL import Image, ImageDraw
+
         cell_size = 50
         cell_border = 2
 
         # Create a blank canvas
         img = Image.new(
-            "RGBA",
-            (self.width * cell_size, self.height * cell_size),
-            "black"
+            "RGBA", (self.width * cell_size, self.height * cell_size), "black"
         )
         draw = ImageDraw.Draw(img)
 
         solution = self.solution[1] if self.solution is not None else None
         for i, row in enumerate(self.walls):
             for j, col in enumerate(row):
-
                 # Walls
                 if col:
                     fill = (40, 40, 40)
@@ -212,9 +208,16 @@ class Maze:
 
                 # Draw cell
                 draw.rectangle(
-                    ([(j * cell_size + cell_border, i * cell_size + cell_border),
-                      ((j + 1) * cell_size - cell_border, (i + 1) * cell_size - cell_border)]),
-                    fill=fill
+                    (
+                        [
+                            (j * cell_size + cell_border, i * cell_size + cell_border),
+                            (
+                                (j + 1) * cell_size - cell_border,
+                                (i + 1) * cell_size - cell_border,
+                            ),
+                        ]
+                    ),
+                    fill=fill,
                 )
 
         img.save(filename)

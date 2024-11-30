@@ -25,27 +25,27 @@ class TestMaze:
 
     def test_neighbors(self, maze):
         neighbors = maze.neighbors((9, 0))
-        expected_neighbors = [('up', (8, 0))]
+        expected_neighbors = [("up", (8, 0))]
         assert neighbors == expected_neighbors
 
     def test_maze_init_multiple_starts(self, monkeypatch):
-        monkeypatch.setattr('builtins.open', lambda x, y='r': io.StringIO("AA B"))
+        monkeypatch.setattr("builtins.open", lambda x, y="r": io.StringIO("AA B"))
         with pytest.raises(Exception):
             Maze("../test_files/maze1.txt")
 
     def test_maze_init_multiple_goals(self, monkeypatch):
-        monkeypatch.setattr('builtins.open', lambda x, y='r': io.StringIO("A BB"))
+        monkeypatch.setattr("builtins.open", lambda x, y="r": io.StringIO("A BB"))
         with pytest.raises(Exception):
             Maze("../test_files/maze1.txt")
 
     def test_maze_solve_exists(self, monkeypatch):
-        monkeypatch.setattr('builtins.open', lambda x, y='r': io.StringIO("A  B"))
+        monkeypatch.setattr("builtins.open", lambda x, y="r": io.StringIO("A  B"))
         maze = Maze("../test_files/maze1.txt")
         maze.solve()
         assert maze.solution is not None
 
     def test_maze_neighbors_exists(self, monkeypatch):
-        monkeypatch.setattr('builtins.open', lambda x, y='r': io.StringIO("A  B"))
+        monkeypatch.setattr("builtins.open", lambda x, y="r": io.StringIO("A  B"))
         maze = Maze("../test_files/maze1.txt")
         neighbors = maze.neighbors(maze.start)
         assert isinstance(neighbors, list)
