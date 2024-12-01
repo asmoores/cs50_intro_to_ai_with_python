@@ -5,7 +5,12 @@ from abc import (
     abstractmethod,
 )  # ABC is a package that provides abstract base classes.
 
-EXACTLY_ONE_START_POINT = "maze must have exactly one start point"
+from src.cs50_intro_to_ai_with_python.maze.error_messages import (
+    EXACTLY_ONE_START_POINT,
+    EXACTLY_ONE_GOAL,
+    NO_SOLUTION,
+    EMPTY_FRONTIER,
+)
 
 
 class Node:
@@ -65,7 +70,7 @@ class StackFrontier(Frontier):
 
     def remove(self):
         if self.empty():
-            raise Exception("empty frontier")
+            raise Exception(EMPTY_FRONTIER)
         else:
             node = self.frontier.pop()
             return node
@@ -78,7 +83,7 @@ class QueueFrontier(Frontier):
 
     def remove(self):
         if self.empty():
-            raise Exception("empty frontier")
+            raise Exception(EMPTY_FRONTIER)
         else:
             node = self.frontier[0]
             self.frontier = self.frontier[1:]
@@ -102,7 +107,7 @@ class Maze:
         if contents.count("A") != 1:
             raise Exception("%s" % EXACTLY_ONE_START_POINT)
         if contents.count("B") != 1:
-            raise Exception("maze must have exactly one goal")
+            raise Exception(EXACTLY_ONE_GOAL)
 
         # Determine height and width of maze
         contents = contents.splitlines()
@@ -177,7 +182,7 @@ class Maze:
         while True:
             # If nothing left in frontier, then no path
             if frontier.empty():
-                raise Exception("no solution")
+                raise Exception(NO_SOLUTION)
 
             # Extract the next node in the frontier to be examined
             node = frontier.remove()
