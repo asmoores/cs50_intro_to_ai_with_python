@@ -1,6 +1,10 @@
 import pytest
 import io
 
+from src.cs50_intro_to_ai_with_python.maze.error_messages import (
+    EXACTLY_ONE_START_POINT,
+    EXACTLY_ONE_GOAL,
+)
 from src.cs50_intro_to_ai_with_python.maze.maze import Maze
 
 
@@ -96,10 +100,10 @@ class TestMaze:
     @pytest.mark.parametrize(
         "maze_input, exception_message",
         [
-            ("maze_with_no_start_point", "maze must have exactly one start point"),
-            ("maze_with_no_end_point", "maze must have exactly one goal"),
-            ("maze_with_two_start_points", "maze must have exactly one start point"),
-            ("maze_with_two_end_points", "maze must have exactly one goal"),
+            ("maze_with_no_start_point", EXACTLY_ONE_START_POINT),
+            ("maze_with_no_end_point", EXACTLY_ONE_GOAL),
+            ("maze_with_two_start_points", EXACTLY_ONE_START_POINT),
+            ("maze_with_two_end_points", EXACTLY_ONE_GOAL),
         ],
     )
     def test_maze_init_raises_exception_for_invalid_input(
