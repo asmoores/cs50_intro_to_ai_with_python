@@ -273,7 +273,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         maze_file = "maze1.txt"
     else:
-        maz_file = sys.argv[1]
+        maze_file = sys.argv[1]
 
     m = Maze(maze_file)
     print("Maze:")
