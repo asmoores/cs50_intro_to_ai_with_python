@@ -270,6 +270,7 @@ class Maze:
 
 
 if __name__ == "__main__":
+    # If no arg passed use default file.
     if len(sys.argv) != 2:
         maze_file = "maze1.txt"
     else:
