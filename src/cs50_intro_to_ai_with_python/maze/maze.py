@@ -1,4 +1,5 @@
 import sys
+from PIL import Image, ImageDraw
 from abc import (
     ABC,
     abstractmethod,
@@ -18,6 +19,7 @@ class Node:
           action:  a List of possible actions, or moves, that can be taken from this state.
 
     """
+
     def __init__(self, state, parent, action):
         self.state = state
         self.parent = parent
@@ -58,6 +60,7 @@ class StackFrontier(Frontier):
     """
     Implements depth first search.
     """
+
     def remove(self):
         if self.empty():
             raise Exception("empty frontier")
@@ -70,6 +73,7 @@ class QueueFrontier(Frontier):
     """
     Implements breadth first search.
     """
+
     def remove(self):
         if self.empty():
             raise Exception("empty frontier")
@@ -83,6 +87,7 @@ class Maze:
     """
     Represents the search space.
     """
+
     def __init__(self, filename):
         self.explored = None
         self.num_explored = None
@@ -220,10 +225,7 @@ class Maze:
             print()
         print()
 
-
     def output_image(self, filename, show_solution=True, show_explored=False):
-        from PIL import Image, ImageDraw
-
         cell_size = 50
         cell_border = 2
 
