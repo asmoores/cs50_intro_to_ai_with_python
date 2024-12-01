@@ -1,8 +1,21 @@
 import sys
+
+''' ABC is a package that provides abstract base classes.'''
 from abc import ABC, abstractmethod
 
 
 class Node:
+    """
+    In search algorithms nodes represent the individual states that are explored during the search process.  A node
+    is a fundamental unit in search algorithms and encapsulated information about a particular state in the search space.
+
+    Attributes:
+          state: a tuple representing the position of the node in search space.  In this case it is a position within
+          a maze.
+          parent: The parent, or preceding, node in the search tree.  A Node can have only one parent but can be the
+          parent of many node.
+          action:  a List of possible actions, or moves, that can be taken from this state.
+    """
     def __init__(self, state, parent, action):
         self.state = state
         self.parent = parent
@@ -10,6 +23,14 @@ class Node:
 
 
 class Frontier(ABC):
+    """
+    Abstract base class for frontiers.
+    Inherits from ABC to mark it as an abstract class and allow the use of the @abstractmethod decorator. If the class
+    did not inherit from ABC then the @abstractmethod decorator would not be honoured.
+
+    This class is used to represent the frontier of the search algorithm, i.e. the next nodes to be explored.
+    """
+
     def __init__(self):
         self.frontier = []
 
@@ -22,8 +43,13 @@ class Frontier(ABC):
     def add(self, node):
         self.frontier.append(node)
 
+
     @abstractmethod
     def remove(self):
+        """
+        Remove and return a node from the frontier. Subclasses must implement this function and the implementation
+        will determine whether the search is breadth first or depth first.
+        """
         pass
 
 
@@ -32,8 +58,9 @@ class StackFrontier(Frontier):
         if self.empty():
             raise Exception("empty frontier")
         else:
-            node = self.frontier[-1]
-            self.frontier = self.frontier[:-1]
+            # node = self.frontier[-1]
+            # self.frontier = self.frontier[:-1]
+            node = self.frontier.pop()
             return node
 
 
@@ -49,9 +76,10 @@ class QueueFrontier(Frontier):
 
 class Maze:
     def __init__(self, filename):
-        # Read file and set height and width of maze
         self.explored = None
         self.num_explored = None
+
+        # Read file and set height and width of maze
         with open(filename) as f:
             contents = f.read()
 
@@ -66,6 +94,10 @@ class Maze:
         self.height = len(contents)
         self.width = max(len(line) for line in contents)
 
+        self._setup_walls(contents)
+        self.solution = None
+
+    def _setup_walls(self, contents):
         # Keep track of walls
         self.walls = []
         for i in range(self.height):
@@ -85,8 +117,6 @@ class Maze:
                 except IndexError:
                     row.append(False)
             self.walls.append(row)
-
-        self.solution = None
 
     def print(self):
         solution = self.solution[1] if self.solution is not None else None
@@ -117,9 +147,20 @@ class Maze:
 
         result = []
         for action, (r, c) in candidates:
-            if 0 <= r < self.height and 0 <= c < self.width and not self.walls[r][c]:
+#            if 0 <= r < self.height and 0 <= c < self.width and not self.walls[r][c]:
+            if self._can_visit(r, c):
                 result.append((action, (r, c)))
         return result
+
+    def _is_within_bounds(self, r, c):
+        """Check if (r, c) is within the maze."""
+        return 0 <= r < self.height and 0 <= c < self.width
+
+    def _is_not_a_wall(self, r, c):
+        return not self.walls[r][c]
+
+    def _can_visit(self, r, c):
+        return self._is_within_bounds(r, c) and self._is_not_a_wall(r, c)
 
     def solve(self):
         """Finds a solution to maze, if one exists."""
@@ -142,8 +183,8 @@ class Maze:
                 raise Exception("no solution")
 
             # Choose a node from the frontier
-            node = frontier.remove()
-            self.num_explored += 1
+            node = frontier.remove()  # Extract the next node in the frontier to be examined
+            self.num_explored += 1    # This could be done after checking if we have solved the maze
 
             # If node is the goal, then we have a solution
             if node.state == self.goal:
@@ -225,9 +266,11 @@ class Maze:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        sys.exit("Usage: python maze.py maze.txt")
+        maze_file = 'maze1.txt'
+    else:
+        maz_file = sys.argv[1]
 
-    m = Maze(sys.argv[1])
+    m = Maze(maze_file)
     print("Maze:")
     m.print()
     print("Solving...")
