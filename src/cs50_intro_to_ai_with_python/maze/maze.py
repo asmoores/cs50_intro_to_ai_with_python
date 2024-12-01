@@ -1,5 +1,8 @@
 import sys
-from abc import ABC, abstractmethod  # ABC is a package that provides abstract base classes.
+from abc import (
+    ABC,
+    abstractmethod,
+)  # ABC is a package that provides abstract base classes.
 
 
 class Node:
