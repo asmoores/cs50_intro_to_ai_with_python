@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.289  # Use the latest version of Ruff
+    hooks:
+      - id: ruff
+        args: [--check]  # Ensure formatting is checked
+      - id: ruff
+        name: ruff-linter
+        args: [check]  # Linting step
+
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.389
+    hooks:
+    - id: pyright
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run tests
+        entry: uv run pytest
+        language: system
+        pass_filenames: false  # pytest doesn't need file names
+        always_run: true
+
+      - id: uv-sync
+        name: Sync project dependencies
+        entry: uv sync --all-extras --dev --locked
+        language: system
+        pass_filenames: false
+        always_run: true
