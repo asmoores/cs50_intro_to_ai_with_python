@@ -1,6 +1,6 @@
 import sys
 
-''' ABC is a package that provides abstract base classes.'''
+""" ABC is a package that provides abstract base classes."""
 from abc import ABC, abstractmethod
 
 
@@ -16,6 +16,7 @@ class Node:
           parent of many node.
           action:  a List of possible actions, or moves, that can be taken from this state.
     """
+
     def __init__(self, state, parent, action):
         self.state = state
         self.parent = parent
@@ -42,7 +43,6 @@ class Frontier(ABC):
 
     def add(self, node):
         self.frontier.append(node)
-
 
     @abstractmethod
     def remove(self):
@@ -270,7 +270,7 @@ class Maze:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        maze_file = 'maze1.txt'
+        maze_file = "maze1.txt"
     else:
         maz_file = sys.argv[1]
 
