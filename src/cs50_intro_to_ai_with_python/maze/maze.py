@@ -12,6 +12,10 @@ from src.cs50_intro_to_ai_with_python.maze.error_messages import (
     EMPTY_FRONTIER,
 )
 
+from src.cs50_intro_to_ai_with_python.directions import Direction
+
+UP, DOWN, LEFT, RIGHT = Direction
+
 
 class Node:
     """
@@ -141,10 +145,10 @@ class Maze:
     def neighbors(self, state):
         row, col = state
         candidates = [
-            ("up", (row - 1, col)),
-            ("down", (row + 1, col)),
-            ("left", (row, col - 1)),
-            ("right", (row, col + 1)),
+            (UP, (row - 1, col)),
+            (DOWN, (row + 1, col)),
+            (LEFT, (row, col - 1)),
+            (RIGHT, (row, col + 1)),
         ]
 
         result = []

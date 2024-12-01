@@ -1,5 +1,8 @@
 import pytest
 import io
+from src.cs50_intro_to_ai_with_python.directions import Direction
+
+UP, DOWN, LEFT, RIGHT = Direction
 
 from src.cs50_intro_to_ai_with_python.maze.error_messages import (
     EXACTLY_ONE_START_POINT,
@@ -22,14 +25,14 @@ class TestMaze:
     def test_maze_solves_correctly(self, maze):
         maze.solve()
         solution_actions, solution_cells = maze.solution
-        assert solution_actions[0] == "up"
+        assert solution_actions[0] == UP
         assert solution_cells[0] == (8, 0)
-        assert solution_actions[-1] == "up"
+        assert solution_actions[-1] == UP
         assert solution_cells[-1] == (0, 5)
 
     def test_neighbors(self, maze):
         neighbors = maze.neighbors((9, 0))
-        expected_neighbors = [("up", (8, 0))]
+        expected_neighbors = [(UP, (8, 0))]
         assert neighbors == expected_neighbors
 
     @pytest.fixture
