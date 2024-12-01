@@ -16,8 +16,8 @@ class Node:
           parent: The parent, or preceding, node in the search tree.  A Node can have only one parent but can be the
           parent of many node.
           action:  a List of possible actions, or moves, that can be taken from this state.
-    """
 
+    """
     def __init__(self, state, parent, action):
         self.state = state
         self.parent = parent
@@ -55,17 +55,21 @@ class Frontier(ABC):
 
 
 class StackFrontier(Frontier):
+    """
+    Implements depth first search.
+    """
     def remove(self):
         if self.empty():
             raise Exception("empty frontier")
         else:
-            # node = self.frontier[-1]
-            # self.frontier = self.frontier[:-1]
             node = self.frontier.pop()
             return node
 
 
 class QueueFrontier(Frontier):
+    """
+    Implements breadth first search.
+    """
     def remove(self):
         if self.empty():
             raise Exception("empty frontier")
@@ -76,6 +80,9 @@ class QueueFrontier(Frontier):
 
 
 class Maze:
+    """
+    Represents the search space.
+    """
     def __init__(self, filename):
         self.explored = None
         self.num_explored = None
@@ -118,24 +125,6 @@ class Maze:
                 except IndexError:
                     row.append(False)
             self.walls.append(row)
-
-    def print(self):
-        solution = self.solution[1] if self.solution is not None else None
-        print()
-        for i, row in enumerate(self.walls):
-            for j, col in enumerate(row):
-                if col:
-                    print("█", end="")
-                elif (i, j) == self.start:
-                    print("A", end="")
-                elif (i, j) == self.goal:
-                    print("B", end="")
-                elif solution is not None and (i, j) in solution:
-                    print("*", end="")
-                else:
-                    print(" ", end="")
-            print()
-        print()
 
     def neighbors(self, state):
         row, col = state
@@ -183,35 +172,54 @@ class Maze:
             if frontier.empty():
                 raise Exception("no solution")
 
-            # Choose a node from the frontier
-            node = (
-                frontier.remove()
-            )  # Extract the next node in the frontier to be examined
-            self.num_explored += (
-                1  # This could be done after checking if we have solved the maze
-            )
+            # Extract the next node in the frontier to be examined
+            node = frontier.remove()
 
-            # If node is the goal, then we have a solution
+            self.num_explored += 1
+
             if node.state == self.goal:
-                actions = []
-                cells = []
-                while node.parent is not None:
-                    actions.append(node.action)
-                    cells.append(node.state)
-                    node = node.parent
-                actions.reverse()
-                cells.reverse()
-                self.solution = (actions, cells)
+                self._create_solution(node)
                 return
 
             # Mark node as explored
             self.explored.add(node.state)
+            self._add_neighbours_to_frontier(frontier, node)
 
-            # Add neighbors to frontier
-            for action, state in self.neighbors(node.state):
-                if not frontier.contains_state(state) and state not in self.explored:
-                    child = Node(state=state, parent=node, action=action)
-                    frontier.add(child)
+    def _create_solution(self, node):
+        actions = []
+        cells = []
+        while node.parent is not None:
+            actions.append(node.action)
+            cells.append(node.state)
+            node = node.parent
+        actions.reverse()
+        cells.reverse()
+        self.solution = (actions, cells)
+
+    def _add_neighbours_to_frontier(self, frontier, node):
+        for action, state in self.neighbors(node.state):
+            if not frontier.contains_state(state) and state not in self.explored:
+                child = Node(state=state, parent=node, action=action)
+                frontier.add(child)
+
+    def print(self):
+        solution = self.solution[1] if self.solution is not None else None
+        print()
+        for i, row in enumerate(self.walls):
+            for j, col in enumerate(row):
+                if col:
+                    print("█", end="")
+                elif (i, j) == self.start:
+                    print("A", end="")
+                elif (i, j) == self.goal:
+                    print("B", end="")
+                elif solution is not None and (i, j) in solution:
+                    print("*", end="")
+                else:
+                    print(" ", end="")
+            print()
+        print()
+
 
     def output_image(self, filename, show_solution=True, show_explored=False):
         from PIL import Image, ImageDraw
