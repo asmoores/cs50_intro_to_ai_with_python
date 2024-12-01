@@ -1,14 +1,13 @@
 import pytest
 import io
-from src.cs50_intro_to_ai_with_python.directions import Direction
-
-UP, DOWN, LEFT, RIGHT = Direction
-
 from src.cs50_intro_to_ai_with_python.maze.error_messages import (
     EXACTLY_ONE_START_POINT,
     EXACTLY_ONE_GOAL,
 )
 from src.cs50_intro_to_ai_with_python.maze.maze import Maze
+from src.cs50_intro_to_ai_with_python.directions import Direction
+
+UP, DOWN, LEFT, RIGHT = Direction
 
 
 class TestMaze:
