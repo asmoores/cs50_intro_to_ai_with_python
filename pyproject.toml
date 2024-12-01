@@ -6,12 +6,17 @@ readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
     "pillow>=11.0.0",
+    "pygame>=2.6.1",
 ]
 
 [dependency-groups]
 dev = [
     "coverage>=7.6.8",
+    "pyright>=1.1.389",
     "pytest>=8.3.3",
     "ruff>=0.8.1",
 ]
 
+[tool.ruff.lint]
+select = ["F","E"]  # Enables Flake8 and PyFlakes rules
+ignore = ["E501"]  # Line too long

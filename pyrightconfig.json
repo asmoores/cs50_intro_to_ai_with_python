@@ -1,0 +1,6 @@
+{
+  "include": ["src"],
+  "reportUndefinedVariable": true,
+  "reportOperatorIssue": false,
+  "reportAttributeAccessIssue": false
+}
