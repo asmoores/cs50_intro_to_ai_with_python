@@ -5,6 +5,8 @@ from abc import (
     abstractmethod,
 )  # ABC is a package that provides abstract base classes.
 
+EXACTLY_ONE_START_POINT = "maze must have exactly one start point"
+
 
 class Node:
     """
@@ -98,7 +100,7 @@ class Maze:
 
         # Validate start and goal
         if contents.count("A") != 1:
-            raise Exception("maze must have exactly one start point")
+            raise Exception("%s" % EXACTLY_ONE_START_POINT)
         if contents.count("B") != 1:
             raise Exception("maze must have exactly one goal")
 
