@@ -147,7 +147,7 @@ class Maze:
 
         result = []
         for action, (r, c) in candidates:
-#            if 0 <= r < self.height and 0 <= c < self.width and not self.walls[r][c]:
+            #            if 0 <= r < self.height and 0 <= c < self.width and not self.walls[r][c]:
             if self._can_visit(r, c):
                 result.append((action, (r, c)))
         return result
@@ -183,8 +183,12 @@ class Maze:
                 raise Exception("no solution")
 
             # Choose a node from the frontier
-            node = frontier.remove()  # Extract the next node in the frontier to be examined
-            self.num_explored += 1    # This could be done after checking if we have solved the maze
+            node = (
+                frontier.remove()
+            )  # Extract the next node in the frontier to be examined
+            self.num_explored += (
+                1  # This could be done after checking if we have solved the maze
+            )
 
             # If node is the goal, then we have a solution
             if node.state == self.goal:
