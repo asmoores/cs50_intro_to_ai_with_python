@@ -1,4 +1,7 @@
 import sys
+import logging
+from pprint import pformat, pprint
+
 from PIL import Image, ImageDraw
 from abc import (
     ABC,
@@ -15,6 +18,10 @@ from src.cs50_intro_to_ai_with_python.maze.error_messages import (
 from src.cs50_intro_to_ai_with_python.directions import Direction
 
 UP, DOWN, LEFT, RIGHT = Direction
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 class Node:
@@ -36,6 +43,9 @@ class Node:
         self.parent = parent
         self.action = action
 
+    def __repr__(self):
+        return f"Node(state={self.state}, parent={repr(self.parent)}, action={self.action})"
+
 
 class Frontier(ABC):
     """
@@ -48,6 +58,14 @@ class Frontier(ABC):
 
     def __init__(self):
         self.frontier = []
+
+    def log_attributes(self):
+        logging.info("%s attributes: %s", self.__class__.__name__, pformat(vars(self)))
+
+    def __repr__(self):
+        # Define a meaningful representation for the object
+        logging.info("Node attributes: %s", pformat(vars(self)))
+        return f"Node({vars(self)})"
 
     def contains_state(self, state):
         return any(node.state == state for node in self.frontier)
@@ -95,13 +113,11 @@ class QueueFrontier(Frontier):
 
 
 class Maze:
-    """
-    Represents the search space.
-    """
+    """Represents the search space."""
 
     def __init__(self, filename):
         self.explored = None
-        self.num_explored = None
+        self.num_of_states_explored = None
 
         # Read file and set height and width of maze
         with open(filename) as f:
@@ -171,11 +187,14 @@ class Maze:
     def solve(self):
         """Finds a solution to maze, if one exists."""
 
+        logging.info("Solving maze")
+
         # Keep track of number of states explored
-        self.num_explored = 0
+        self.num_of_states_explored = 0
 
         # Initialize frontier to just the starting position
         start = Node(state=self.start, parent=None, action=None)
+        logging.info(f"Adding {start.state} with {start.action}")
         frontier = StackFrontier()  # StackFrontier QueueFrontier
         frontier.add(start)
 
@@ -190,8 +209,9 @@ class Maze:
 
             # Extract the next node in the frontier to be examined
             node = frontier.remove()
+            logging.info(f"Checking {node.state}")
 
-            self.num_explored += 1
+            self.num_of_states_explored += 1
 
             if node.state == self.goal:
                 self._create_solution(node)
@@ -199,7 +219,12 @@ class Maze:
 
             # Mark node as explored
             self.explored.add(node.state)
+            logging.info(f"Adding {node.state} to explored")
             self._add_neighbours_to_frontier(frontier, node)
+            for idx, node in enumerate(frontier.frontier):
+                print(f"Node {idx + 1}:")
+                pprint(vars(node), width=1)  # Use vars() to access all attributes
+                print()  # Add spacing between nodes
 
     def _create_solution(self, node):
         actions = []
@@ -302,7 +327,7 @@ if __name__ == "__main__":
     m.print()
     print("Solving...")
     m.solve()
-    print("States Explored:", m.num_explored)
+    print("States Explored:", m.num_of_states_explored)
     print("Solution:")
     m.print()
     m.output_image("maze.png", show_explored=True)
