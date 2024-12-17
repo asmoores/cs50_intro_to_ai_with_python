@@ -91,8 +91,9 @@ class TestMaze:
     def test_maze_solve_complex(self, monkeypatch, complex_maze):
         monkeypatch.setattr("builtins.open", lambda x, y="r": io.StringIO(complex_maze))
         maze = Maze(complex_maze)
-        maze.print()
+        # maze.print()
         maze.solve()
+        # maze.print()
         assert maze.solution is not None
 
     @pytest.fixture

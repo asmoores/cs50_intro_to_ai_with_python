@@ -1,5 +1,6 @@
 import sys
 import logging
+import time
 from pprint import pformat, pprint
 
 from PIL import Image, ImageDraw
@@ -136,6 +137,7 @@ class Maze:
 
         self._setup_walls(contents)
         self.solution = None
+        self.explored = set()
 
     def _setup_walls(self, contents):
         # Keep track of walls
@@ -184,6 +186,29 @@ class Maze:
     def _can_visit(self, r, c):
         return self._is_within_bounds(r, c) and self._is_not_a_wall(r, c)
 
+    def print_initial_maze(self):
+        """Print the maze initially."""
+        print("\nInitial Maze:")
+        for i, row in enumerate(self.walls):
+            for j, col in enumerate(row):
+                if col:
+                    print("█", end="")
+                elif (i, j) == self.start:
+                    print("A", end="")
+                elif (i, j) == self.goal:
+                    print("B", end="")
+                else:
+                    print(" ", end="")
+            print()
+
+    def update_explored_node(self, state):
+        """
+        Update a single explored node using ANSI escape codes to avoid redrawing the entire maze.
+        """
+        row, col = state
+        if state != self.start and state != self.goal:  # Skip 'A' and 'B'
+            print(f"\033[{row + 5};{col + 1}H*", end="", flush=True)
+
     def solve(self):
         """Finds a solution to maze, if one exists."""
 
@@ -194,37 +219,58 @@ class Maze:
 
         # Initialize frontier to just the starting position
         start = Node(state=self.start, parent=None, action=None)
-        logging.info(f"Adding {start.state} with {start.action}")
+        # logging.info(f"Adding {start.state} with {start.action}")
         frontier = StackFrontier()  # StackFrontier QueueFrontier
         frontier.add(start)
 
         # Initialize an empty explored set
         self.explored = set()
 
-        # Keep looping until solution found
-        while True:
-            # If nothing left in frontier, then no path
-            if frontier.empty():
-                raise Exception(NO_SOLUTION)
+        self.print_initial_maze()
+        print("\nExploring maze...\n")
 
-            # Extract the next node in the frontier to be examined
-            node = frontier.remove()
-            logging.info(f"Checking {node.state}")
+        try:
+            print("\033[?25l", end="", flush=True)
+            time.sleep(1)  # Pause for
 
-            self.num_of_states_explored += 1
+            # Keep looping until solution found
+            while True:
+                # If nothing left in frontier, then no path
+                if frontier.empty():
+                    raise Exception(NO_SOLUTION)
 
-            if node.state == self.goal:
-                self._create_solution(node)
-                return
+                # Extract the next node in the frontier to be examined
+                node = frontier.remove()
+                # logging.info(f"Checking {node.state}")
+
+                self.explored.add(node.state)
+                self.update_explored_node(node.state)  # Update only the current node
+                time.sleep(0.1)  # Pause for
+
+                self.num_of_states_explored += 1
+
+                if node.state == self.goal:
+                    self._create_solution(node)
+                    break
+
+                for action, state in self.neighbors(node.state):
+                    if (
+                        not frontier.contains_state(state)
+                        and state not in self.explored
+                    ):
+                        frontier.add(Node(state=state, parent=node, action=action))
+        finally:
+            print("\033[?25h", end="", flush=True)
+            print(f"\033[{self.height + 29};1H", end="", flush=True)
 
             # Mark node as explored
-            self.explored.add(node.state)
-            logging.info(f"Adding {node.state} to explored")
-            self._add_neighbours_to_frontier(frontier, node)
-            for idx, node in enumerate(frontier.frontier):
-                print(f"Node {idx + 1}:")
-                pprint(vars(node), width=1)  # Use vars() to access all attributes
-                print()  # Add spacing between nodes
+            # self.explored.add(node.state)
+            # # logging.info(f"Adding {node.state} to explored")
+            # self._add_neighbours_to_frontier(frontier, node)
+            # for idx, node in enumerate(frontier.frontier):
+            #     print(f"Node {idx + 1}:")
+            #     pprint(vars(node), width=1)  # Use vars() to access all attributes
+            #     print()  # Add spacing between nodes
 
     def _create_solution(self, node):
         actions = []
@@ -323,11 +369,11 @@ if __name__ == "__main__":
         maze_file = sys.argv[1]
 
     m = Maze(maze_file)
-    print("Maze:")
-    m.print()
-    print("Solving...")
+    # print("Maze:")
+    # m.print()
+    # print("Solving...")
     m.solve()
-    print("States Explored:", m.num_of_states_explored)
-    print("Solution:")
-    m.print()
-    m.output_image("maze.png", show_explored=True)
+    # print("States Explored:", m.num_of_states_explored)
+    # print("Solution:")
+    # m.print()
+    # m.output_image("maze.png", show_explored=True)
